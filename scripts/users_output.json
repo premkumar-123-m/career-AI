@@ -1,0 +1,47 @@
+[
+  {
+    "id": "a875b143-5052-407b-931c-fbe5931ffa51",
+    "name": "John Doe",
+    "email": "student@example.com",
+    "password": "$2b$10$5FDt0ESpeZncRmUDv/XE9OE04fPqIHEyaaVzsp6Cwv9V51WYpdkta",
+    "role": "Student",
+    "createdAt": "2026-03-11T06:02:12.033Z",
+    "updatedAt": "2026-03-17T05:43:19.177Z"
+  },
+  {
+    "id": "5f1027e1-8878-4f19-8dfa-a3a6de1d478d",
+    "name": "kumar",
+    "email": "m6474230@gmail.com",
+    "password": "$2b$10$AMh58H4luG739bTZ.FBu3.7dSdGAKoHFYTcrXGaf4RVq0iCd/eGkm",
+    "role": "Student",
+    "createdAt": "2026-03-12T06:51:02.821Z",
+    "updatedAt": "2026-03-16T04:54:41.591Z"
+  },
+  {
+    "id": "127bc586-40e5-48b2-a0a8-3d0d96f20863",
+    "name": "kumar",
+    "email": "m6474230@gamil.com",
+    "password": "$2b$10$TU8.EqPJyEx6/1yWSbDae.h/z1OOG6.HwOFlcZDsYiPX1kMuk1Lg6",
+    "role": "Student",
+    "createdAt": "2026-03-17T04:37:32.884Z",
+    "updatedAt": "2026-03-17T04:37:32.884Z"
+  },
+  {
+    "id": "4506a6c1-a64b-4b66-a88c-45d90d21248d",
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "$2b$10$gR60Tg.ITExtVCdb7HjojO5ZQ9RsTqDsXHI/1cmizyvDcCJqgdLcm",
+    "role": "Student",
+    "createdAt": "2026-03-18T05:17:35.561Z",
+    "updatedAt": "2026-03-18T05:17:35.561Z"
+  },
+  {
+    "id": "4a8480f8-05f6-421d-af06-6119b92c4708",
+    "name": "kiran",
+    "email": "mrgangaaaaa5@gamil.com",
+    "password": "$2b$10$Z.zRvshiYiAyffgsfyYvi.1wklj28NRh6mmpfV4uTKcO/HECOHQm6",
+    "role": "Student",
+    "createdAt": "2026-03-18T06:26:57.001Z",
+    "updatedAt": "2026-03-18T06:26:57.001Z"
+  }
+]

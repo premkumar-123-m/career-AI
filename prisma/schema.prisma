@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String?
+  role      String   @default("Student")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobMatches     JobMatch[]
+  skillGaps      SkillGap[]
+  mockInterviews MockInterview[]
+  portfolios     Portfolio[]
+  resumeScores   ResumeScore[]
+}
+
+model ResumeScore {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score     Int
+  feedback  String
+  createdAt DateTime @default(now())
+}
+
+model JobMatch {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  company        String
+  matchPercentage Int
+  type           String   // e.g., "Full-Time", "Internship"
+  status         String   @default("Recommended") // e.g., "Recommended", "Applied"
+  createdAt      DateTime @default(now())
+}
+
+model SkillGap {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill       String
+  proficiency String   // e.g., "Beginner", "Intermediate", "Advanced"
+  progress    Int      // 0-100%
+  category    String   // e.g., "Frontend", "Backend"
+}
+
+model MockInterview {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       String
+  difficulty String
+  score      Int?
+  feedback   String?
+  createdAt  DateTime @default(now())
+}
+
+model Portfolio {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme     String   @default("Minimalist")
+  color     String   @default("#6366f1")
+  sections  String   // JSON string or comma-separated to keep it simple for SQLite
+  resumeData String? // JSON string to store extracted skills and highlights from resume
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
