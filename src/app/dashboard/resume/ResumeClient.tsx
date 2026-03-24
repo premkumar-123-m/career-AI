@@ -36,11 +36,13 @@ export default function ResumeClient({ initialData }: { initialData: any }) {
             setIsDoneFixing(true);
 
             // Generate "Fixed Resume" document
-            const resumeContent = `
-==================================================
-           IMPROVED RESUME CONTENT
-==================================================
-Target Role: ${scores.targetRole}
+            import('jspdf').then(({ jsPDF }) => {
+                const doc = new jsPDF();
+                
+                doc.setFontSize(16);
+                doc.text("IMPROVED RESUME CONTENT", 20, 20);
+                
+                const resumeContent = `Target Role: ${scores.targetRole}
 
 [AI Suggestions Applied]
 • Added strong action verbs
@@ -53,19 +55,18 @@ Professional Experience - Bullet Points to Add/Replace:
 - Led a cross-functional team of 5 engineers to successfully deliver 3 major product releases ahead of schedule.
 - Implemented robust testing protocols, achieving 95% test coverage and decreasing production bugs by 25%.
 
-Note: Copy these optimized bullet points into your actual resume document to match your new scores!
-==================================================
-            `;
+Note: Copy these optimized bullet points into your actual resume document to match your new scores!`;
 
-            const blob = new Blob([resumeContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${file?.name ? file.name.split('.')[0] + '_Improved' : 'Improved_Resume'}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+                doc.setFontSize(11);
+                const lines = doc.splitTextToSize(resumeContent, 170);
+                doc.text(lines, 20, 30);
+                
+                const fileName = `${file?.name ? file.name.split('.')[0] + '_Improved' : 'Improved_Resume'}.pdf`;
+                doc.save(fileName);
+            }).catch(err => {
+                console.error("Failed to load jsPDF", err);
+                alert("Could not generate PDF.");
+            });
 
         }, 2500);
     };
@@ -254,7 +255,7 @@ Note: Copy these optimized bullet points into your actual resume document to mat
                         onClick={handleApplyFixes}
                         disabled={isFixing || isDoneFixing}
                     >
-                        {isFixing ? 'Applying AI Fixes...' : isDoneFixing ? 'Fixes Applied ✨' : 'Apply Fixes via AI'}
+                        {isFixing ? 'Generating PDF...' : isDoneFixing ? 'PDF Downloaded ✨' : 'Download Fixed Resume (PDF)'}
                     </button>
                 </div>
             </div>
