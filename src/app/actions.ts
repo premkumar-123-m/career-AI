@@ -236,9 +236,9 @@ export async function registerUser(formData: FormData) {
         await createSession(user.id);
 
         return { success: true };
-    } catch (e) {
+    } catch (e: any) {
         console.error("Register error:", e);
-        return { success: false, error: 'Registration failed' };
+        return { success: false, error: `Registration failed: ${e.message || String(e)}` };
     }
 }
 
@@ -267,9 +267,9 @@ export async function loginUser(formData: FormData) {
         await createSession(user.id);
 
         return { success: true };
-    } catch (e) {
+    } catch (e: any) {
         console.error("Login error:", e);
-        return { success: false, error: 'Login failed' };
+        return { success: false, error: `Login failed: ${e.message || String(e)}` };
     }
 }
 
