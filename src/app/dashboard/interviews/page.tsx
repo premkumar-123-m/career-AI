@@ -38,6 +38,11 @@ export default async function MockInterviews() {
           font-family: inherit;
         }
 
+        .select-input option {
+          background: var(--bg-dark);
+          color: white;
+        }
+
         .question-card {
           padding: 2rem;
           background: var(--bg-card-hover);
