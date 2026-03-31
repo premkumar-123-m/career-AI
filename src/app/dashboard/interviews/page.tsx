@@ -91,7 +91,7 @@ export default async function MockInterviews() {
         }
       `}} />
 
-            <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>AI Mock Interview</h1>
+            <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>AI Mock Test</h1>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
                 Practice answering technical and behavioral questions tailored to your target role: <strong>{targetRole}</strong>.
             </p>

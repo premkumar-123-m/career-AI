@@ -246,7 +246,7 @@ export default async function Dashboard() {
                             <div className="timeline-item">
                                 <div className="timeline-icon" style={{ background: 'var(--gradient-brand)', color: 'white' }}>⏳</div>
                                 <div>
-                                    <h4 style={{ fontSize: '0.875rem', fontWeight: 600 }}>Mock Interview Practice</h4>
+                                    <h4 style={{ fontSize: '0.875rem', fontWeight: 600 }}>Mock Test Practice</h4>
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Pending action</p>
                                 </div>
                             </div>

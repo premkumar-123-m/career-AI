@@ -174,7 +174,7 @@ export default function Home() {
           </div>
           <div className="feature-card glass-panel">
             <div className="feature-icon">🎙️</div>
-            <h3>AI Mock Interviews</h3>
+            <h3>AI Mock Test</h3>
             <p>Practice makes perfect. Generate custom, role-specific interview questions and get real-time feedback before the big day.</p>
           </div>
           <div className="feature-card glass-panel">

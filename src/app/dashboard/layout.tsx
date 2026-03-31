@@ -130,7 +130,7 @@ export default async function DashboardLayout({
             <span>🎯</span> Skill Gap
           </a>
           <a href="/dashboard/interviews" className="nav-item">
-            <span>🎙️</span> Mock Interviews
+            <span>🎙️</span> Mock Test
           </a>
           <a href="/dashboard/portfolio" className="nav-item">
             <span>🌐</span> Generator
