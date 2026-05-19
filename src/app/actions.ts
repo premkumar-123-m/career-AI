@@ -79,6 +79,10 @@ export async function analyzeUploadedResume(formData: FormData) {
         try {
             const buffer = Buffer.from(await file.arrayBuffer());
             if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                // Polyfill for pdf-parse in Node 20+
+                if (typeof global.DOMMatrix === 'undefined') {
+                    (global as any).DOMMatrix = class DOMMatrix { };
+                }
                 const pdfParse = require('pdf-parse');
                 const pdfData = await pdfParse(buffer);
                 textContent = pdfData.text;
