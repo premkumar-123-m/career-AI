@@ -23,19 +23,18 @@ export default async function DashboardLayout({
         .dashboard-wrapper {
           display: flex;
           min-height: 100vh;
-          background: var(--bg-dark);
+          background: var(--bg-main);
         }
 
         .sidebar {
           width: 280px;
-          background: rgba(7, 7, 10, 0.8);
+          background: var(--bg-card);
           border-right: 1px solid var(--border-light);
           padding: 2rem 1.5rem;
           display: flex;
           flex-direction: column;
           position: fixed;
           height: 100vh;
-          backdrop-filter: blur(12px);
           z-index: 40;
         }
 
@@ -57,7 +56,7 @@ export default async function DashboardLayout({
           align-items: center;
           gap: 1rem;
           padding: 0.75rem 1rem;
-          border-radius: 12px;
+          border-radius: 8px;
           color: var(--text-secondary);
           transition: var(--transition-normal);
           font-weight: 500;
@@ -70,6 +69,8 @@ export default async function DashboardLayout({
         
         .nav-item.active {
           border-left: 3px solid var(--brand-primary);
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
         }
 
         .sidebar-footer {
@@ -94,6 +95,7 @@ export default async function DashboardLayout({
           align-items: center;
           justify-content: center;
           font-weight: 600;
+          color: white;
         }
 
         .main-content {

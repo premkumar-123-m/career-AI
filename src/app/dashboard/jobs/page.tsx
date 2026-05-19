@@ -80,8 +80,9 @@ export default async function JobMatches() {
         
         .filter-btn.active {
           background: var(--brand-primary);
-          color: white;
+          color: #1e3a8a; /* Dark blue text on white background for contrast */
           border-color: var(--brand-primary);
+          font-weight: 600;
         }
       `}} />
 

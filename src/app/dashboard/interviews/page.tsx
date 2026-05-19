@@ -39,7 +39,7 @@ export default async function MockInterviews() {
         }
 
         .select-input option {
-          background: var(--bg-dark);
+          background: #1e3a8a; /* Solid dark blue to ensure white text is visible */
           color: white;
         }
 

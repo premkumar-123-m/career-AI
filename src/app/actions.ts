@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 import { createSession, getSession, deleteSession } from '@/lib/auth'
 
 import { revalidatePath } from 'next/cache'
-
+import { analyzeResumeText } from '@/lib/analyzer'
 export async function getUserProfile() {
     try {
         const session = await getSession();
@@ -66,17 +66,6 @@ export async function analyzeUploadedResume(formData: FormData) {
         const file = formData.get('file') as File;
         if (!file) return { success: false, error: 'No file provided' };
 
-        const fileName = file.name.toLowerCase();
-
-        let contentToCheck = fileName;
-        try {
-            const buffer = await file.arrayBuffer();
-            const textContent = Buffer.from(buffer).toString('utf-8').toLowerCase();
-            contentToCheck += " " + textContent;
-        } catch (e) {
-            console.log("Could not read file buffer, relying on filename");
-        }
-
         const session = await getSession();
         if (!session || !session.user) return { success: false, error: 'Unauthorized' };
 
@@ -86,74 +75,68 @@ export async function analyzeUploadedResume(formData: FormData) {
 
         if (!user) return { success: false, error: 'User not found' };
 
-        // Determine profile based on file content/name or generic
-        let role = "Software Engineer";
-        let skills = ["React", "Node.js", "TypeScript", "Next.js"];
-        let nextScore = 85;
-        let jobTitle = "Frontend Developer";
-
-        if (contentToCheck.includes("react") || contentToCheck.includes("frontend") || contentToCheck.includes("next.js")) {
-            role = "Frontend Developer";
-            skills = ["React", "Next.js", "Tailwind CSS", "TypeScript"];
-            nextScore = 92;
-            jobTitle = "Senior React Developer";
-        } else if (contentToCheck.includes("backend") || contentToCheck.includes("node") || contentToCheck.includes("express")) {
-            role = "Backend Developer";
-            skills = ["Node.js", "Express", "PostgreSQL", "Docker"];
-            nextScore = 88;
-            jobTitle = "Backend Engineer";
-        } else if (contentToCheck.includes("data") || contentToCheck.includes("python") || contentToCheck.includes("machine learning")) {
-            role = "Data Scientist";
-            skills = ["Python", "Machine Learning", "SQL", "Pandas"];
-            nextScore = 90;
-            jobTitle = "Data Analyst";
-        } else if (contentToCheck.includes("designer") || contentToCheck.includes("ui") || contentToCheck.includes("figma")) {
-            role = "UI/UX Designer";
-            skills = ["Figma", "Adobe XD", "User Research", "Prototyping"];
-            nextScore = 95;
-            jobTitle = "Product Designer";
-        } else {
-            // Generic Fallback Improvements
-            nextScore = 82;
-            jobTitle = "Software Developer";
-            role = "Software Developer";
+        let textContent = "";
+        try {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                const pdfParse = require('pdf-parse');
+                const pdfData = await pdfParse(buffer);
+                textContent = pdfData.text;
+            } else {
+                // Fallback for txt/md files
+                textContent = buffer.toString('utf-8');
+            }
+        } catch (e) {
+            console.error("Failed to parse file buffer:", e);
+            return { success: false, error: 'Failed to read the file contents.' };
         }
+
+        // Analyze using the new engine
+        const analysis = analyzeResumeText(textContent);
 
         // 1. Add new Resume Score
         await prisma.resumeScore.create({
             data: {
                 userId: user.id,
-                score: nextScore,
-                feedback: `Great resume for a ${role} position. Consider adding more quantifiable metrics to your recent experiences.`
+                score: analysis.score,
+                feedback: analysis.feedback
             }
         });
 
         // 2. Add New Job Matches
-        // Clear old ones first to make it obvious
         await prisma.jobMatch.deleteMany({ where: { userId: user.id } });
+        
+        const jobMatchesData = analysis.jobTitles.map((title, idx) => ({
+            userId: user.id,
+            title: title,
+            company: ["TechNova", "Innovate AI", "StartupX", "Global Systems"][idx % 4] + " (AI Matched)",
+            matchPercentage: 95 - (idx * 5),
+            type: ["Full-Time", "Remote", "Hybrid", "Contract"][idx % 4]
+        }));
 
-        await prisma.jobMatch.createMany({
-            data: [
-                { userId: user.id, title: jobTitle, company: "TechNova (AI Matched)", matchPercentage: 95, type: "Full-Time" },
-                { userId: user.id, title: role, company: "Innovate AI (AI Matched)", matchPercentage: 88, type: "Remote" },
-                { userId: user.id, title: `Junior ${role}`, company: "StartupX (AI Matched)", matchPercentage: 100, type: "Hybrid" }
-            ]
-        });
+        if (jobMatchesData.length > 0) {
+            await prisma.jobMatch.createMany({ data: jobMatchesData });
+        }
 
         // 3. Add New Skill Gaps
         await prisma.skillGap.deleteMany({ where: { userId: user.id } });
-        await prisma.skillGap.createMany({
-            data: [
-                { userId: user.id, skill: "GraphQL", proficiency: "Beginner", progress: 20, category: "API" },
-                { userId: user.id, skill: "AWS", proficiency: "Intermediate", progress: 50, category: "Cloud" }
-            ]
-        });
+        if (analysis.gaps.length > 0) {
+            await prisma.skillGap.createMany({
+                data: analysis.gaps.map(g => ({
+                    userId: user.id,
+                    skill: g.skill,
+                    proficiency: g.proficiency,
+                    progress: g.progress,
+                    category: g.category
+                }))
+            });
+        }
 
         // 4. Add New Mock Interview
         await prisma.mockInterview.create({
             data: {
                 userId: user.id,
-                role: role,
+                role: analysis.role,
                 difficulty: "Medium",
                 score: null,
                 feedback: null
@@ -166,7 +149,11 @@ export async function analyzeUploadedResume(formData: FormData) {
             await prisma.portfolio.update({
                 where: { id: portfolio.id },
                 data: {
-                    resumeData: JSON.stringify({ skills: skills, highlight: `${role} Portfolio from Resume`, jobs: [jobTitle, role] })
+                    resumeData: JSON.stringify({ 
+                        skills: analysis.skills, 
+                        highlight: `${analysis.role} Portfolio from Resume`, 
+                        jobs: analysis.jobTitles.slice(0, 2) 
+                    })
                 }
             });
         }
@@ -174,7 +161,7 @@ export async function analyzeUploadedResume(formData: FormData) {
         // Revalidate the dashboard paths
         revalidatePath('/dashboard', 'layout');
 
-        return { success: true, message: 'Resume Analyzed!' };
+        return { success: true, message: 'Resume Analyzed Successfully!' };
 
     } catch (error) {
         console.error("Error analyzing resume:", error);
