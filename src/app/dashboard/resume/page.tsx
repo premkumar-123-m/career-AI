@@ -1,6 +1,7 @@
 import { getUserProfile } from '@/app/actions'
 import ResumeClient from './ResumeClient'
 import GeneratePDFButton from './GeneratePDFButton'
+import CoverLetterClient from './CoverLetterClient'
 
 export default async function ResumeAnalysis() {
     const user = await getUserProfile();
@@ -105,6 +106,8 @@ export default async function ResumeAnalysis() {
             </div>
 
             <ResumeClient initialData={user} />
+            
+            <CoverLetterClient />
 
         </div>
     );

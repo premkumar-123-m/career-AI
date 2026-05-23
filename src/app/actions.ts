@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 import { createSession, getSession, deleteSession } from '@/lib/auth'
 
 import { revalidatePath } from 'next/cache'
-import { analyzeResumeText } from '@/lib/analyzer'
+import { analyzeResumeWithML, generateCoverLetter } from '@/lib/ml-analyzer'
 export async function getUserProfile() {
     try {
         const session = await getSession();
@@ -95,8 +95,8 @@ export async function analyzeUploadedResume(formData: FormData) {
             return { success: false, error: 'Failed to read the file contents.' };
         }
 
-        // Analyze using the new engine
-        const analysis = analyzeResumeText(textContent);
+        // Analyze using the new ML engine (falls back to rule-based if no API key)
+        const analysis = await analyzeResumeWithML(textContent);
 
         // 1. Add new Resume Score
         await prisma.resumeScore.create({
@@ -156,7 +156,8 @@ export async function analyzeUploadedResume(formData: FormData) {
                     resumeData: JSON.stringify({ 
                         skills: analysis.skills, 
                         highlight: `${analysis.role} Portfolio from Resume`, 
-                        jobs: analysis.jobTitles.slice(0, 2) 
+                        jobs: analysis.jobTitles.slice(0, 2),
+                        rawText: textContent.substring(0, 2500) // Store subset of text for cover letters
                     })
                 }
             });
@@ -284,5 +285,31 @@ export async function applyForJob(jobId: string) {
     } catch (error) {
         console.error("Error applying for job:", error);
         return { success: false, error: 'Failed to apply' };
+    }
+}
+
+export async function generateCoverLetterAction(jobTitle: string, company: string) {
+    try {
+        const session = await getSession();
+        if (!session || !session.user) return { success: false, error: 'Unauthorized' };
+
+        // Fetch user's portfolio to get the saved resume text
+        const portfolio = await prisma.portfolio.findFirst({
+            where: { userId: session.user.id }
+        });
+
+        if (!portfolio || !portfolio.resumeData) {
+            return { success: false, error: 'Please upload a resume first.' };
+        }
+
+        const parsedData = JSON.parse(portfolio.resumeData);
+        const resumeText = parsedData.rawText || parsedData.skills?.join(', ') || "No resume text found.";
+
+        const coverLetter = await generateCoverLetter(resumeText, jobTitle, company);
+        
+        return { success: true, coverLetter };
+    } catch (error: any) {
+        console.error("Error generating cover letter:", error);
+        return { success: false, error: error.message || 'Failed to generate cover letter.' };
     }
 }
