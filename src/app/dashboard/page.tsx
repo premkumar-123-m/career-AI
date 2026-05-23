@@ -133,6 +133,22 @@ export default async function Dashboard() {
           justify-content: center;
           z-index: 1;
         }
+
+        .skills-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        @media (max-width: 900px) {
+          .bento-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .skills-grid {
+            grid-template-columns: 1fr;
+          }
+        }
       `}} />
 
             <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Welcome back, {user.name}</h1>
@@ -199,7 +215,7 @@ export default async function Dashboard() {
                             <h3 className="panel-title">Identified Skill Gaps & Courses</h3>
                             <Link href="/dashboard/skills" style={{ color: 'var(--brand-primary)', fontSize: '0.875rem' }}>View Details</Link>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="skills-grid">
                             {topSkills.map((gap: any) => (
                                 <div key={gap.id} style={{ padding: '1.25rem', background: 'var(--bg-card-hover)', borderRadius: '12px' }}>
                                     <h4 style={{ fontWeight: 600, color: gap.category === 'Frontend' ? '#ef4444' : '#eab308', marginBottom: '0.5rem' }}>

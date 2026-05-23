@@ -100,6 +100,14 @@ export default function Home() {
           line-height: 1.6;
         }
         
+        .step-card {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          padding: 2rem;
+          flex-direction: row;
+        }
+
         @media (max-width: 900px) {
            .hero {
              flex-direction: column;
@@ -110,6 +118,16 @@ export default function Home() {
            }
            .hero-actions {
              justify-content: center;
+           }
+           
+           .step-card {
+             flex-direction: column;
+             text-align: center;
+             gap: 1rem;
+           }
+           
+           .features-grid {
+             grid-template-columns: 1fr;
            }
         }
       `}} />
@@ -175,7 +193,7 @@ export default function Home() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-          <div className="feature-card" style={{ display: 'flex', alignItems: 'center', gap: '2rem', padding: '2rem', flexDirection: 'row' }}>
+          <div className="feature-card step-card">
             <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--brand-primary)', opacity: 0.3 }}>01</div>
             <div>
               <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Upload Your Resume</h3>
@@ -183,7 +201,7 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="feature-card" style={{ display: 'flex', alignItems: 'center', gap: '2rem', padding: '2rem', flexDirection: 'row' }}>
+          <div className="feature-card step-card">
             <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--brand-primary)', opacity: 0.3 }}>02</div>
             <div>
               <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Discover Skill Gaps</h3>
@@ -191,7 +209,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="feature-card" style={{ display: 'flex', alignItems: 'center', gap: '2rem', padding: '2rem', flexDirection: 'row' }}>
+          <div className="feature-card step-card">
             <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--brand-primary)', opacity: 0.3 }}>03</div>
             <div>
               <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Learn & Apply</h3>

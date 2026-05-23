@@ -113,6 +113,69 @@ export default async function DashboardLayout({
           padding-bottom: 1rem;
           border-bottom: 1px solid var(--border-light);
         }
+
+        /* --- Mobile Dashboard --- */
+        @media (max-width: 768px) {
+          .sidebar {
+            width: 100%;
+            height: 70px;
+            bottom: 0;
+            top: auto;
+            flex-direction: row;
+            padding: 0.5rem;
+            border-right: none;
+            border-top: 1px solid var(--border-light);
+            justify-content: space-around;
+            align-items: center;
+          }
+
+          .sidebar-brand, .sidebar-footer {
+            display: none;
+          }
+
+          .nav-menu {
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-around;
+            gap: 0;
+          }
+
+          .nav-item {
+            flex-direction: column;
+            padding: 0.5rem;
+            gap: 0.25rem;
+            font-size: 0.7rem;
+            text-align: center;
+          }
+
+          .nav-item.active {
+            border-left: none;
+            border-top: 3px solid var(--brand-primary);
+            border-radius: 0;
+            background: transparent;
+            color: var(--brand-primary) !important;
+          }
+
+          .main-content {
+            margin-left: 0;
+            padding: 1.5rem 1rem 100px 1rem; /* Extra padding at bottom for nav */
+          }
+
+          header.topbar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+
+          header.topbar > div:last-child {
+            width: 100%;
+          }
+          
+          header.topbar .btn-primary {
+            width: 100%;
+            text-align: center;
+          }
+        }
       `}} />
 
       <aside className="sidebar">

@@ -217,3 +217,32 @@ a {
 .topbar {
   border-bottom: 1px solid var(--border-light) !important;
 }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 1rem;
+  }
+  
+  /* Hide non-essential links on mobile to save space */
+  .nav-links a:not(.btn-primary) {
+    display: none;
+  }
+  
+  .nav-links {
+    gap: 1rem;
+  }
+  
+  .section {
+    padding: 4rem 0;
+  }
+  
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  /* Adjust typography for mobile */
+  html {
+    font-size: 14px;
+  }
+}

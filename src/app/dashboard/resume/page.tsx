@@ -62,6 +62,18 @@ export default async function ResumeAnalysis() {
           border-bottom: none;
         }
 
+        @media (max-width: 768px) {
+          .metric-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .resume-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+        }
+
         @media print {
           body {
             background: white !important;
