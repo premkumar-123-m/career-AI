@@ -6,6 +6,18 @@ import { createSession, getSession, deleteSession } from '@/lib/auth'
 
 import { revalidatePath } from 'next/cache'
 import { analyzeResumeWithML, generateCoverLetter } from '@/lib/ml-analyzer'
+
+async function fetchRealJobs(jobTitle: string) {
+    try {
+        const res = await fetch(`https://remotive.com/api/remote-jobs?search=${encodeURIComponent(jobTitle)}&limit=4`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.jobs || [];
+    } catch (e) {
+        console.error("Failed to fetch jobs from Remotive API", e);
+        return [];
+    }
+}
 export async function getUserProfile() {
     try {
         const session = await getSession();
@@ -110,13 +122,30 @@ export async function analyzeUploadedResume(formData: FormData) {
         // 2. Add New Job Matches
         await prisma.jobMatch.deleteMany({ where: { userId: user.id } });
         
-        const jobMatchesData = analysis.jobTitles.map((title, idx) => ({
-            userId: user.id,
-            title: title,
-            company: ["TechNova", "Innovate AI", "StartupX", "Global Systems"][idx % 4] + " (AI Matched)",
-            matchPercentage: 95 - (idx * 5),
-            type: ["Full-Time", "Remote", "Hybrid", "Contract"][idx % 4]
-        }));
+        // Fetch real jobs from Remotive API based on the primary suggested title
+        const primaryTitle = analysis.jobTitles[0] || analysis.role;
+        let realJobs = await fetchRealJobs(primaryTitle);
+        
+        let jobMatchesData = [];
+
+        if (realJobs && realJobs.length > 0) {
+            jobMatchesData = realJobs.slice(0, 4).map((job: any) => ({
+                userId: user.id,
+                title: job.title || primaryTitle,
+                company: job.company_name || "Unknown Company",
+                matchPercentage: Math.floor(Math.random() * (98 - 85 + 1) + 85), // Simulate a high match %
+                type: (job.job_type || "Remote").replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+            }));
+        } else {
+            // Fallback to mock generation if the API fails or returns no jobs
+            jobMatchesData = analysis.jobTitles.map((title, idx) => ({
+                userId: user.id,
+                title: title,
+                company: ["TechNova", "Innovate AI", "StartupX", "Global Systems"][idx % 4] + " (AI Matched)",
+                matchPercentage: 95 - (idx * 5),
+                type: ["Full-Time", "Remote", "Hybrid", "Contract"][idx % 4]
+            }));
+        }
 
         if (jobMatchesData.length > 0) {
             await prisma.jobMatch.createMany({ data: jobMatchesData });
